@@ -13,6 +13,7 @@ export const RelatedSearchesTab = () => {
   const queryClient = useQueryClient();
   const [selectedBlogId, setSelectedBlogId] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [wrParameter, setWrParameter] = useState(1);
 
   const { data: blogs } = useQuery({
     queryKey: ['blogs-for-searches'],
@@ -47,6 +48,7 @@ export const RelatedSearchesTab = () => {
       const { error } = await supabase.from('related_searches').insert({
         blog_id: selectedBlogId,
         search_text: searchText,
+        wr_parameter: wrParameter,
         search_order: searches?.length || 0
       });
       if (error) throw error;
@@ -54,6 +56,7 @@ export const RelatedSearchesTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-searches'] });
       setSearchText("");
+      setWrParameter(1);
       toast.success("Search added!");
     }
   });
@@ -98,22 +101,39 @@ export const RelatedSearchesTab = () => {
             <>
               <div>
                 <Label>Search Text</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="e.g. Best Online Exercise Programs"
-                  />
-                  <Button onClick={() => addSearch.mutate()}>Add</Button>
-                </div>
+                <Input
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder="e.g. Best Online Exercise Programs"
+                />
               </div>
+
+              <div>
+                <Label>WR Parameter (1-4)</Label>
+                <Select value={String(wrParameter)} onValueChange={(v) => setWrParameter(parseInt(v))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">WR 1</SelectItem>
+                    <SelectItem value="2">WR 2</SelectItem>
+                    <SelectItem value="3">WR 3</SelectItem>
+                    <SelectItem value="4">WR 4</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button onClick={() => addSearch.mutate()}>Add Search</Button>
 
               {searches && searches.length > 0 && (
                 <div className="space-y-2">
                   <Label>Current Searches</Label>
                   {searches.map((search) => (
                     <div key={search.id} className="flex items-center justify-between p-2 border rounded">
-                      <span>{search.search_text}</span>
+                      <div>
+                        <span className="font-medium">{search.search_text}</span>
+                        <span className="text-xs text-muted-foreground ml-2">WR {search.wr_parameter || 1}</span>
+                      </div>
                       <Button
                         size="sm"
                         variant="destructive"

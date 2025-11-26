@@ -17,6 +17,7 @@ interface WebResultForm {
   description: string;
   logo_url: string;
   is_sponsored: boolean;
+  wr_parameter: number;
 }
 
 export const WebResultsTab = () => {
@@ -28,7 +29,8 @@ export const WebResultsTab = () => {
     url: "",
     description: "",
     logo_url: "",
-    is_sponsored: false
+    is_sponsored: false,
+    wr_parameter: 1
   });
 
   const { data: searches } = useQuery({
@@ -36,7 +38,7 @@ export const WebResultsTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('related_searches')
-        .select('id, search_text, blog_id')
+        .select('id, search_text, wr_parameter, blog_id')
         .order('search_text');
       if (error) throw error;
       return data;
@@ -71,6 +73,7 @@ export const WebResultsTab = () => {
         description: formData.description,
         logo_url: formData.logo_url || null,
         is_sponsored: formData.is_sponsored,
+        wr_parameter: formData.wr_parameter,
         display_order: results?.length || 0
       });
       if (error) throw error;
@@ -82,7 +85,8 @@ export const WebResultsTab = () => {
         url: "",
         description: "",
         logo_url: "",
-        is_sponsored: false
+        is_sponsored: false,
+        wr_parameter: 1
       });
       toast.success("Web result added!");
     },
@@ -100,7 +104,8 @@ export const WebResultsTab = () => {
           url: formData.url,
           description: formData.description,
           logo_url: formData.logo_url || null,
-          is_sponsored: formData.is_sponsored
+          is_sponsored: formData.is_sponsored,
+          wr_parameter: formData.wr_parameter
         })
         .eq('id', id);
       if (error) throw error;
@@ -113,7 +118,8 @@ export const WebResultsTab = () => {
         url: "",
         description: "",
         logo_url: "",
-        is_sponsored: false
+        is_sponsored: false,
+        wr_parameter: 1
       });
       toast.success("Web result updated!");
     }
@@ -137,7 +143,8 @@ export const WebResultsTab = () => {
       url: result.url,
       description: result.description,
       logo_url: result.logo_url || "",
-      is_sponsored: result.is_sponsored
+      is_sponsored: result.is_sponsored,
+      wr_parameter: result.wr_parameter || 1
     });
   };
 
@@ -148,7 +155,8 @@ export const WebResultsTab = () => {
       url: "",
       description: "",
       logo_url: "",
-      is_sponsored: false
+      is_sponsored: false,
+      wr_parameter: 1
     });
   };
 
@@ -170,7 +178,7 @@ export const WebResultsTab = () => {
               <SelectContent>
                 {searches?.map((search) => (
                   <SelectItem key={search.id} value={search.id}>
-                    {search.search_text}
+                    {search.search_text} (WR {search.wr_parameter || 1})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -221,6 +229,21 @@ export const WebResultsTab = () => {
                   />
                 </div>
 
+                <div>
+                  <Label>WR Parameter (must match search)</Label>
+                  <Select value={String(formData.wr_parameter)} onValueChange={(v) => setFormData({ ...formData, wr_parameter: parseInt(v) })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">WR 1</SelectItem>
+                      <SelectItem value="2">WR 2</SelectItem>
+                      <SelectItem value="3">WR 3</SelectItem>
+                      <SelectItem value="4">WR 4</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="sponsored"
@@ -265,6 +288,9 @@ export const WebResultsTab = () => {
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-medium">{result.title}</h4>
+                          <span className="text-xs bg-muted px-2 py-0.5 rounded">
+                            WR {result.wr_parameter || 1}
+                          </span>
                           {result.is_sponsored && (
                             <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">
                               Sponsored

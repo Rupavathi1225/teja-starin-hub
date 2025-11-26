@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -10,6 +10,8 @@ import { ExternalLink } from "lucide-react";
 
 const SearchPage = () => {
   const { searchId } = useParams();
+  const [searchParams] = useSearchParams();
+  const wrParam = searchParams.get('wr') || '1';
 
   const { data: search } = useQuery({
     queryKey: ['search', searchId],
@@ -26,12 +28,13 @@ const SearchPage = () => {
   });
 
   const { data: webResults } = useQuery({
-    queryKey: ['web-results', searchId],
+    queryKey: ['web-results', searchId, wrParam],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('web_results')
         .select('*')
         .eq('related_search_id', searchId)
+        .eq('wr_parameter', parseInt(wrParam))
         .order('is_sponsored', { ascending: false })
         .order('display_order', { ascending: true });
       
@@ -56,14 +59,16 @@ const SearchPage = () => {
       eventData: { 
         search_text: search?.search_text,
         result_url: result.url,
-        result_title: result.title
+        result_title: result.title,
+        wr_parameter: wrParam,
+        is_sponsored: result.is_sponsored
       },
       relatedSearchId: searchId
     });
     
     // Redirect to pre-landing page with target URL
     const targetUrl = encodeURIComponent(result.url);
-    window.location.href = `/prelanding/${searchId}?targetUrl=${targetUrl}`;
+    window.location.href = `/prelanding/${searchId}?targetUrl=${targetUrl}&wr=${wrParam}`;
   };
 
   if (!search) {
