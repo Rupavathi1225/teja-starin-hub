@@ -36,7 +36,7 @@ const BlogDetail = () => {
     if (blog) {
       trackEvent({
         eventType: 'blog_view',
-        eventData: { title: blog.title },
+        eventData: { blog_title: blog.title },
         blogId: blog.id
       });
     }

@@ -7,13 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit2, Save, X } from "lucide-react";
 
 export const RelatedSearchesTab = () => {
   const queryClient = useQueryClient();
   const [selectedBlogId, setSelectedBlogId] = useState("");
   const [searchText, setSearchText] = useState("");
   const [wrParameter, setWrParameter] = useState(1);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data: blogs } = useQuery({
     queryKey: ['blogs-for-searches'],
@@ -61,6 +62,26 @@ export const RelatedSearchesTab = () => {
     }
   });
 
+  const updateSearch = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('related_searches')
+        .update({
+          search_text: searchText,
+          wr_parameter: wrParameter
+        })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-searches'] });
+      setEditingId(null);
+      setSearchText("");
+      setWrParameter(1);
+      toast.success("Search updated!");
+    }
+  });
+
   const deleteSearch = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('related_searches').delete().eq('id', id);
@@ -71,6 +92,18 @@ export const RelatedSearchesTab = () => {
       toast.success("Search deleted!");
     }
   });
+
+  const handleEdit = (search: any) => {
+    setEditingId(search.id);
+    setSearchText(search.search_text);
+    setWrParameter(search.wr_parameter || 1);
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setSearchText("");
+    setWrParameter(1);
+  };
 
   return (
     <div className="space-y-6">
@@ -123,7 +156,22 @@ export const RelatedSearchesTab = () => {
                 </Select>
               </div>
 
-              <Button onClick={() => addSearch.mutate()}>Add Search</Button>
+              <div className="flex gap-2">
+                {editingId ? (
+                  <>
+                    <Button onClick={() => updateSearch.mutate(editingId)}>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </Button>
+                    <Button variant="outline" onClick={handleCancel}>
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => addSearch.mutate()}>Add Search</Button>
+                )}
+              </div>
 
               {searches && searches.length > 0 && (
                 <div className="space-y-2">
@@ -134,13 +182,22 @@ export const RelatedSearchesTab = () => {
                         <span className="font-medium">{search.search_text}</span>
                         <span className="text-xs text-muted-foreground ml-2">WR {search.wr_parameter || 1}</span>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => deleteSearch.mutate(search.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEdit(search)}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteSearch.mutate(search.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
