@@ -30,11 +30,14 @@ export const RelatedSearches = ({ blogId }: RelatedSearchesProps) => {
   const handleSearchClick = async (search: any) => {
     await trackEvent({
       eventType: 'related_search_click',
-      eventData: { search_text: search.search_text },
+      eventData: { 
+        search_text: search.search_text,
+        wr_parameter: search.wr_parameter 
+      },
       relatedSearchId: search.id,
       blogId
     });
-    navigate(`/search/${search.id}`);
+    navigate(`/search/${search.id}?wr=${search.wr_parameter || 1}`);
   };
 
   if (!searches || searches.length === 0) return null;

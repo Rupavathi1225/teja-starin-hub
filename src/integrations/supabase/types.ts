@@ -131,39 +131,48 @@ export type Database = {
           background_color: string | null
           button_color: string | null
           button_text_color: string | null
+          countdown_seconds: number | null
           created_at: string | null
           description: string | null
           headline: string | null
           id: string
           logo_url: string | null
           main_image_url: string | null
+          redirect_description: string | null
           related_search_id: string | null
+          subtitle: string | null
           updated_at: string | null
         }
         Insert: {
           background_color?: string | null
           button_color?: string | null
           button_text_color?: string | null
+          countdown_seconds?: number | null
           created_at?: string | null
           description?: string | null
           headline?: string | null
           id?: string
           logo_url?: string | null
           main_image_url?: string | null
+          redirect_description?: string | null
           related_search_id?: string | null
+          subtitle?: string | null
           updated_at?: string | null
         }
         Update: {
           background_color?: string | null
           button_color?: string | null
           button_text_color?: string | null
+          countdown_seconds?: number | null
           created_at?: string | null
           description?: string | null
           headline?: string | null
           id?: string
           logo_url?: string | null
           main_image_url?: string | null
+          redirect_description?: string | null
           related_search_id?: string | null
+          subtitle?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -183,6 +192,7 @@ export type Database = {
           id: string
           search_order: number | null
           search_text: string
+          wr_parameter: number | null
         }
         Insert: {
           blog_id?: string | null
@@ -190,6 +200,7 @@ export type Database = {
           id?: string
           search_order?: number | null
           search_text: string
+          wr_parameter?: number | null
         }
         Update: {
           blog_id?: string | null
@@ -197,6 +208,7 @@ export type Database = {
           id?: string
           search_order?: number | null
           search_text?: string
+          wr_parameter?: number | null
         }
         Relationships: [
           {
@@ -280,6 +292,7 @@ export type Database = {
           title: string
           updated_at: string | null
           url: string
+          wr_parameter: number | null
         }
         Insert: {
           created_at?: string | null
@@ -292,6 +305,7 @@ export type Database = {
           title: string
           updated_at?: string | null
           url: string
+          wr_parameter?: number | null
         }
         Update: {
           created_at?: string | null
@@ -304,6 +318,7 @@ export type Database = {
           title?: string
           updated_at?: string | null
           url?: string
+          wr_parameter?: number | null
         }
         Relationships: []
       }

@@ -16,7 +16,10 @@ export const PreLandingTab = () => {
     logo_url: "",
     main_image_url: "",
     headline: "",
+    subtitle: "",
     description: "",
+    redirect_description: "",
+    countdown_seconds: 3,
     background_color: "#ffffff",
     button_color: "#000000",
     button_text_color: "#ffffff"
@@ -27,7 +30,7 @@ export const PreLandingTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('related_searches')
-        .select('id, search_text, blog:blogs(title)')
+        .select('id, search_text, wr_parameter, blog:blogs(title)')
         .order('search_text');
       if (error) throw error;
       return data;
@@ -49,7 +52,10 @@ export const PreLandingTab = () => {
           logo_url: data.logo_url || "",
           main_image_url: data.main_image_url || "",
           headline: data.headline || "",
+          subtitle: data.subtitle || "",
           description: data.description || "",
+          redirect_description: data.redirect_description || "",
+          countdown_seconds: data.countdown_seconds || 3,
           background_color: data.background_color || "#ffffff",
           button_color: data.button_color || "#000000",
           button_text_color: data.button_text_color || "#ffffff"
@@ -104,7 +110,7 @@ export const PreLandingTab = () => {
               <SelectContent>
                 {searches?.map((search) => (
                   <SelectItem key={search.id} value={search.id}>
-                    {search.search_text} ({search.blog?.title})
+                    {search.search_text} (WR={search.wr_parameter}) - {search.blog?.title}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -141,12 +147,42 @@ export const PreLandingTab = () => {
               </div>
 
               <div>
+                <Label>Subtitle</Label>
+                <Input
+                  value={formData.subtitle}
+                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  placeholder="Enter your subtitle"
+                />
+              </div>
+
+              <div>
                 <Label>Description</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Enter your description"
                   rows={3}
+                />
+              </div>
+
+              <div>
+                <Label>Redirect Description (shown during countdown)</Label>
+                <Textarea
+                  value={formData.redirect_description}
+                  onChange={(e) => setFormData({ ...formData, redirect_description: e.target.value })}
+                  placeholder="You will be redirected to..."
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <Label>Countdown Seconds (2-10)</Label>
+                <Input
+                  type="number"
+                  min="2"
+                  max="10"
+                  value={formData.countdown_seconds}
+                  onChange={(e) => setFormData({ ...formData, countdown_seconds: parseInt(e.target.value) || 3 })}
                 />
               </div>
 
