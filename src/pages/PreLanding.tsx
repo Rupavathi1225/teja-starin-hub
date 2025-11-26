@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import { trackEvent, getSessionId, getIPInfo } from "@/lib/tracking";
 
 const PreLanding = () => {
   const { searchId } = useParams();
+  const [searchParams] = useSearchParams();
+  const targetUrl = searchParams.get('targetUrl');
   const [email, setEmail] = useState("");
 
   const { data: config } = useQuery({
@@ -48,8 +50,15 @@ const PreLanding = () => {
       });
     },
     onSuccess: () => {
-      toast.success("Thank you! Your email has been submitted.");
+      toast.success("Thank you! Redirecting...");
       setEmail("");
+      
+      // Redirect to target URL after successful email submission
+      if (targetUrl) {
+        setTimeout(() => {
+          window.location.href = decodeURIComponent(targetUrl);
+        }, 1500);
+      }
     },
     onError: () => {
       toast.error("Failed to submit email. Please try again.");

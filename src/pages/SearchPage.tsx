@@ -60,7 +60,10 @@ const SearchPage = () => {
       },
       relatedSearchId: searchId
     });
-    window.open(result.url, '_blank');
+    
+    // Redirect to pre-landing page with target URL
+    const targetUrl = encodeURIComponent(result.url);
+    window.location.href = `/prelanding/${searchId}?targetUrl=${targetUrl}`;
   };
 
   if (!search) {

@@ -30,7 +30,7 @@ const AdminPanel = () => {
         </div>
         
         <Tabs defaultValue="blogs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="searches">Related Searches</TabsTrigger>
