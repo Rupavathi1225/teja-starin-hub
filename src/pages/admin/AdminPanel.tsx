@@ -4,6 +4,7 @@ import { BlogsTab } from "./BlogsTab";
 import { CategoriesTab } from "./CategoriesTab";
 import { RelatedSearchesTab } from "./RelatedSearchesTab";
 import { PreLandingTab } from "./PreLandingTab";
+import { WebResultsTab } from "./WebResultsTab";
 import { AnalyticsTab } from "./AnalyticsTab";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -29,10 +30,11 @@ const AdminPanel = () => {
         </div>
         
         <Tabs defaultValue="blogs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="searches">Related Searches</TabsTrigger>
+            <TabsTrigger value="webresults">Web Results</TabsTrigger>
             <TabsTrigger value="prelanding">Pre-Landing</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
@@ -47,6 +49,10 @@ const AdminPanel = () => {
           
           <TabsContent value="searches">
             <RelatedSearchesTab />
+          </TabsContent>
+          
+          <TabsContent value="webresults">
+            <WebResultsTab />
           </TabsContent>
           
           <TabsContent value="prelanding">

@@ -268,6 +268,45 @@ export type Database = {
           },
         ]
       }
+      web_results: {
+        Row: {
+          created_at: string | null
+          description: string
+          display_order: number | null
+          id: string
+          is_sponsored: boolean | null
+          logo_url: string | null
+          related_search_id: string
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          id?: string
+          is_sponsored?: boolean | null
+          logo_url?: string | null
+          related_search_id: string
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          id?: string
+          is_sponsored?: boolean | null
+          logo_url?: string | null
+          related_search_id?: string
+          title?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
