@@ -38,7 +38,7 @@ export const WebResultsTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('related_searches')
-        .select('id, search_text, wr_parameter, blog_id')
+        .select('id, search_text, wr_parameter, blog_id, blog:blogs(title)')
         .order('search_text');
       if (error) throw error;
       return data;
@@ -178,7 +178,7 @@ export const WebResultsTab = () => {
               <SelectContent>
                 {searches?.map((search) => (
                   <SelectItem key={search.id} value={search.id}>
-                    {search.search_text} (WR {search.wr_parameter || 1})
+                    {search.blog?.title} ›››› {search.search_text} (WR={search.wr_parameter || 1})
                   </SelectItem>
                 ))}
               </SelectContent>

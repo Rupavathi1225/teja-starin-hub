@@ -17,7 +17,12 @@ const SearchPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('related_searches')
-        .select('*')
+        .select(`
+          *,
+          blogs (
+            title
+          )
+        `)
         .eq('id', searchId)
         .single();
       
@@ -88,6 +93,17 @@ const SearchPage = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
+          {/* Breadcrumb Navigation */}
+          {search.blogs && (
+            <div className="text-sm text-muted-foreground mb-4">
+              <span className="font-medium">{search.blogs.title}</span>
+              <span className="mx-2">›››› </span>
+              <span className="font-medium">{search.search_text}</span>
+              <span className="mx-2">›››› </span>
+              <span>Web Results (WR={wrParam})</span>
+            </div>
+          )}
+          
           <h1 className="text-3xl font-bold">{search.search_text}</h1>
 
           {/* Sponsored Results */}

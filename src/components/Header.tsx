@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const categories = [
   { name: "Home", path: "/" },
@@ -11,6 +11,9 @@ const categories = [
 ];
 
 export const Header = () => {
+  const location = useLocation();
+  const isSearchPage = location.pathname.startsWith('/search');
+  
   return (
     <header className="border-b border-border bg-background sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -19,17 +22,19 @@ export const Header = () => {
             tejastarin
           </Link>
           
-          <nav className="hidden md:flex items-center gap-6">
-            {categories.map((category) => (
-              <Link
-                key={category.path}
-                to={category.path}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-              >
-                {category.name}
-              </Link>
-            ))}
-          </nav>
+          {!isSearchPage && (
+            <nav className="hidden md:flex items-center gap-6">
+              {categories.map((category) => (
+                <Link
+                  key={category.path}
+                  to={category.path}
+                  className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
       </div>
     </header>

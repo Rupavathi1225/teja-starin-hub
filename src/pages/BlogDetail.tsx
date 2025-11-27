@@ -11,6 +11,8 @@ import { format } from "date-fns";
 import { useEffect } from "react";
 import { trackEvent } from "@/lib/tracking";
 
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop";
+
 const BlogDetail = () => {
   const { slug } = useParams();
 
@@ -97,13 +99,11 @@ const BlogDetail = () => {
             
             {/* Main content */}
             <div className="lg:col-span-3 space-y-6">
-              {blog.featured_image && (
-                <img
-                  src={blog.featured_image}
-                  alt={blog.title}
-                  className="w-full aspect-video object-cover rounded-lg"
-                />
-              )}
+              <img
+                src={blog.featured_image || DEFAULT_IMAGE}
+                alt={blog.title}
+                className="w-full aspect-video object-cover rounded-lg"
+              />
               
               <div className="prose prose-lg max-w-none">
                 {blog.content.split('\n').map((paragraph, index) => (
