@@ -147,7 +147,11 @@ export const BlogForm = ({ blog, onClose }: BlogFormProps) => {
               type="url"
               value={formData.featured_image}
               onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
+              placeholder="Leave empty to use default placeholder image"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              Optional: Add a custom image URL or leave blank for default
+            </p>
           </div>
 
           <div>

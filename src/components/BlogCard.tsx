@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&h=400&fit=crop";
+
 interface BlogCardProps {
   blog: {
     id: string;
@@ -22,15 +24,13 @@ export const BlogCard = ({ blog, index }: BlogCardProps) => {
   return (
     <Link to={`/blog/${blog.slug}`}>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        {blog.featured_image && (
-          <div className="aspect-video overflow-hidden">
-            <img
-              src={blog.featured_image}
-              alt={blog.title}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        )}
+        <div className="aspect-video overflow-hidden">
+          <img
+            src={blog.featured_image || DEFAULT_IMAGE}
+            alt={blog.title}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          />
+        </div>
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-2">
             {blog.category && (

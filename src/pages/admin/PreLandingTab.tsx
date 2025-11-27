@@ -110,7 +110,7 @@ export const PreLandingTab = () => {
               <SelectContent>
                 {searches?.map((search) => (
                   <SelectItem key={search.id} value={search.id}>
-                    {search.search_text} (WR={search.wr_parameter}) - {search.blog?.title}
+                    {search.blog?.title} ›››› {search.search_text} (WR={search.wr_parameter})
                   </SelectItem>
                 ))}
               </SelectContent>
