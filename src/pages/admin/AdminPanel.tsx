@@ -7,6 +7,11 @@ import { PreLandingTab } from "./PreLandingTab";
 import { WebResultsTab } from "./WebResultsTab";
 import { AnalyticsTab } from "./AnalyticsTab";
 import { EmailCapturesTab } from "./EmailCapturesTab";
+import { MingleRelatedSearchesTab } from "./mingle/MingleRelatedSearchesTab";
+import { MingleWebResultsTab } from "./mingle/MingleWebResultsTab";
+import { MingleLandingPagesTab } from "./mingle/MingleLandingPagesTab";
+import { MingleAnalyticsTab } from "./mingle/MingleAnalyticsTab";
+import { MinglePreLandingTab } from "./mingle/MinglePreLandingTab";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
@@ -31,7 +36,7 @@ const AdminPanel = () => {
         </div>
         
         <Tabs defaultValue="blogs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
             <TabsTrigger value="blogs">Blogs</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
             <TabsTrigger value="searches">Related Searches</TabsTrigger>
@@ -39,6 +44,11 @@ const AdminPanel = () => {
             <TabsTrigger value="prelanding">Pre-Landing</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="emails">Email Captures</TabsTrigger>
+            <TabsTrigger value="mingle-searches">Mingle: Searches</TabsTrigger>
+            <TabsTrigger value="mingle-results">Mingle: Results</TabsTrigger>
+            <TabsTrigger value="mingle-landing">Mingle: Landing</TabsTrigger>
+            <TabsTrigger value="mingle-prelanding">Mingle: Pre-Landing</TabsTrigger>
+            <TabsTrigger value="mingle-analytics">Mingle: Analytics</TabsTrigger>
           </TabsList>
           
           <TabsContent value="blogs">
@@ -67,6 +77,26 @@ const AdminPanel = () => {
 
         <TabsContent value="emails">
           <EmailCapturesTab />
+        </TabsContent>
+
+        <TabsContent value="mingle-searches">
+          <MingleRelatedSearchesTab />
+        </TabsContent>
+
+        <TabsContent value="mingle-results">
+          <MingleWebResultsTab />
+        </TabsContent>
+
+        <TabsContent value="mingle-landing">
+          <MingleLandingPagesTab />
+        </TabsContent>
+
+        <TabsContent value="mingle-prelanding">
+          <MinglePreLandingTab />
+        </TabsContent>
+
+        <TabsContent value="mingle-analytics">
+          <MingleAnalyticsTab />
         </TabsContent>
       </Tabs>
       </div>
