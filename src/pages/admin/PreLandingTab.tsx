@@ -37,6 +37,18 @@ export const PreLandingTab = () => {
     }
   });
 
+  const { data: webResults } = useQuery({
+    queryKey: ['web-results-for-prelanding'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('web_results')
+        .select('id, title, related_search_id, wr_parameter')
+        .order('title');
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const { data: config } = useQuery({
     queryKey: ['prelanding-config', selectedSearchId],
     queryFn: async () => {
@@ -102,17 +114,29 @@ export const PreLandingTab = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Select Related Search</Label>
+            <Label>Select Related Search & Web Result</Label>
             <Select value={selectedSearchId} onValueChange={setSelectedSearchId}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a search" />
               </SelectTrigger>
               <SelectContent>
-                {searches?.map((search) => (
-                  <SelectItem key={search.id} value={search.id}>
-                    {search.blog?.title} ›››› {search.search_text} (WR={search.wr_parameter})
-                  </SelectItem>
-                ))}
+                {searches?.map((search) => {
+                  const relatedWebResults = webResults?.filter(
+                    wr => wr.related_search_id === search.id && wr.wr_parameter === search.wr_parameter
+                  ) || [];
+                  
+                  return relatedWebResults.length > 0 ? (
+                    relatedWebResults.map(wr => (
+                      <SelectItem key={`${search.id}-${wr.id}`} value={search.id}>
+                        {search.blog?.title} ›››› {search.search_text} ›››› {wr.title}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem key={search.id} value={search.id}>
+                      {search.blog?.title} ›››› {search.search_text} ›››› (No web results)
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
