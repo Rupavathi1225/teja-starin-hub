@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export const PreLandingTab = () => {
   const queryClient = useQueryClient();
+
   const [selectedSearchId, setSelectedSearchId] = useState("");
+
   const [formData, setFormData] = useState({
     logo_url: "",
     main_image_url: "",
@@ -22,43 +30,52 @@ export const PreLandingTab = () => {
     countdown_seconds: 3,
     background_color: "#ffffff",
     button_color: "#000000",
-    button_text_color: "#ffffff"
+    button_text_color: "#ffffff",
   });
 
+  // Load Related Searches
   const { data: searches } = useQuery({
-    queryKey: ['searches-for-prelanding'],
+    queryKey: ["searches-for-prelanding"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('related_searches')
-        .select('id, search_text, wr_parameter, blog:blogs(title)')
-        .order('search_text');
+        .from("related_searches")
+        .select("id, search_text, wr_parameter, blog:blogs(title)")
+        .order("search_text");
+
       if (error) throw error;
       return data;
-    }
+    },
   });
 
+  // Load WEB results
   const { data: webResults } = useQuery({
-    queryKey: ['web-results-for-prelanding'],
+    queryKey: ["web-results-for-prelanding"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('web_results')
-        .select('id, title, related_search_id, wr_parameter')
-        .order('title');
+        .from("web_results")
+        .select("id, title, related_search_id, wr_parameter")
+        .order("title");
+
       if (error) throw error;
       return data;
-    }
+    },
   });
 
+  // Load existing Pre-Landing Config
   const { data: config } = useQuery({
-    queryKey: ['prelanding-config', selectedSearchId],
+    queryKey: ["prelanding-config", selectedSearchId],
+    enabled: !!selectedSearchId,
     queryFn: async () => {
       if (!selectedSearchId) return null;
+
       const { data, error } = await supabase
-        .from('pre_landing_config')
-        .select('*')
-        .eq('related_search_id', selectedSearchId)
+        .from("pre_landing_config")
+        .select("*")
+        .eq("related_search_id", selectedSearchId)
         .maybeSingle();
+
       if (error) throw error;
+
       if (data) {
         setFormData({
           logo_url: data.logo_url || "",
@@ -70,38 +87,55 @@ export const PreLandingTab = () => {
           countdown_seconds: data.countdown_seconds || 3,
           background_color: data.background_color || "#ffffff",
           button_color: data.button_color || "#000000",
-          button_text_color: data.button_text_color || "#ffffff"
+          button_text_color: data.button_text_color || "#ffffff",
+        });
+      } else {
+        // Reset form for NEW ENTRY
+        setFormData({
+          logo_url: "",
+          main_image_url: "",
+          headline: "",
+          subtitle: "",
+          description: "",
+          redirect_description: "",
+          countdown_seconds: 3,
+          background_color: "#ffffff",
+          button_color: "#000000",
+          button_text_color: "#ffffff",
         });
       }
+
       return data;
     },
-    enabled: !!selectedSearchId
   });
 
+  // Save Config
   const saveConfig = useMutation({
     mutationFn: async () => {
       if (!selectedSearchId) return;
-      
+
       if (config) {
+        // UPDATE
         const { error } = await supabase
-          .from('pre_landing_config')
+          .from("pre_landing_config")
           .update(formData)
-          .eq('id', config.id);
+          .eq("id", config.id);
+
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('pre_landing_config')
-          .insert({
-            ...formData,
-            related_search_id: selectedSearchId
-          });
+        // INSERT
+        const { error } = await supabase.from("pre_landing_config").insert({
+          ...formData,
+          related_search_id: selectedSearchId,
+        });
+
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['prelanding-config'] });
+      queryClient.invalidateQueries({ queryKey: ["prelanding-config"] });
       toast.success("Configuration saved!");
-    }
+    },
   });
 
   return (
@@ -112,28 +146,40 @@ export const PreLandingTab = () => {
         <CardHeader>
           <CardTitle>Configure Pre-Landing Page</CardTitle>
         </CardHeader>
+
         <CardContent className="space-y-4">
+          {/* SELECT FIELD FIXED HERE */}
           <div>
             <Label>Select Related Search & Web Result</Label>
+
             <Select value={selectedSearchId} onValueChange={setSelectedSearchId}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a search" />
               </SelectTrigger>
+
               <SelectContent>
                 {searches?.map((search) => {
-                  const relatedWebResults = webResults?.filter(
-                    wr => wr.related_search_id === search.id && wr.wr_parameter === search.wr_parameter
-                  ) || [];
-                  
+                  const relatedWebResults =
+                    webResults?.filter(
+                      (wr) =>
+                        wr.related_search_id === search.id &&
+                        wr.wr_parameter === search.wr_parameter
+                    ) || [];
+
                   return relatedWebResults.length > 0 ? (
-                    relatedWebResults.map(wr => (
-                      <SelectItem key={`${search.id}-${wr.id}`} value={search.id}>
-                        {search.blog?.title} ›››› {search.search_text} ›››› {wr.title}
+                    relatedWebResults.map((wr) => (
+                      <SelectItem
+                        key={wr.id}
+                        value={String(search.id)} // FIXED: stable unique value
+                      >
+                        {search.blog?.title} ›››› {search.search_text} ››››{" "}
+                        {wr.title}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem key={search.id} value={search.id}>
-                      {search.blog?.title} ›››› {search.search_text} ›››› (No web results)
+                    <SelectItem key={search.id} value={String(search.id)}>
+                      {search.blog?.title} ›››› {search.search_text} ›››› (No
+                      web results)
                     </SelectItem>
                   );
                 })}
@@ -141,13 +187,16 @@ export const PreLandingTab = () => {
             </Select>
           </div>
 
+          {/* FORM FIELDS */}
           {selectedSearchId && (
             <>
               <div>
                 <Label>Logo URL</Label>
                 <Input
                   value={formData.logo_url}
-                  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, logo_url: e.target.value })
+                  }
                   placeholder="https://example.com/logo.png"
                 />
               </div>
@@ -156,7 +205,9 @@ export const PreLandingTab = () => {
                 <Label>Main Image URL</Label>
                 <Input
                   value={formData.main_image_url}
-                  onChange={(e) => setFormData({ ...formData, main_image_url: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, main_image_url: e.target.value })
+                  }
                   placeholder="https://example.com/hero.jpg"
                 />
               </div>
@@ -165,8 +216,10 @@ export const PreLandingTab = () => {
                 <Label>Headline</Label>
                 <Input
                   value={formData.headline}
-                  onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-                  placeholder="Enter your compelling headline"
+                  onChange={(e) =>
+                    setFormData({ ...formData, headline: e.target.value })
+                  }
+                  placeholder="Enter your headline"
                 />
               </div>
 
@@ -174,7 +227,9 @@ export const PreLandingTab = () => {
                 <Label>Subtitle</Label>
                 <Input
                   value={formData.subtitle}
-                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, subtitle: e.target.value })
+                  }
                   placeholder="Enter your subtitle"
                 />
               </div>
@@ -183,40 +238,56 @@ export const PreLandingTab = () => {
                 <Label>Description</Label>
                 <Textarea
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Enter your description"
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                 />
               </div>
 
               <div>
-                <Label>Redirect Description (shown during countdown)</Label>
+                <Label>Redirect Description (during countdown)</Label>
                 <Textarea
                   value={formData.redirect_description}
-                  onChange={(e) => setFormData({ ...formData, redirect_description: e.target.value })}
-                  placeholder="You will be redirected to..."
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      redirect_description: e.target.value,
+                    })
+                  }
                   rows={2}
                 />
               </div>
 
               <div>
-                <Label>Countdown Seconds (2-10)</Label>
+                <Label>Countdown Seconds (2–10)</Label>
                 <Input
                   type="number"
                   min="2"
                   max="10"
                   value={formData.countdown_seconds}
-                  onChange={(e) => setFormData({ ...formData, countdown_seconds: parseInt(e.target.value) || 3 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      countdown_seconds: parseInt(e.target.value) || 3,
+                    })
+                  }
                 />
               </div>
 
+              {/* COLORS */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label>Background Color</Label>
                   <Input
                     type="color"
                     value={formData.background_color}
-                    onChange={(e) => setFormData({ ...formData, background_color: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        background_color: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -225,7 +296,12 @@ export const PreLandingTab = () => {
                   <Input
                     type="color"
                     value={formData.button_color}
-                    onChange={(e) => setFormData({ ...formData, button_color: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        button_color: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -234,14 +310,17 @@ export const PreLandingTab = () => {
                   <Input
                     type="color"
                     value={formData.button_text_color}
-                    onChange={(e) => setFormData({ ...formData, button_text_color: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        button_text_color: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
 
-              <Button onClick={() => saveConfig.mutate()}>
-                Save Configuration
-              </Button>
+              <Button onClick={() => saveConfig.mutate()}>Save Configuration</Button>
             </>
           )}
         </CardContent>

@@ -7,7 +7,7 @@ export const CategoriesTab = () => {
     queryKey: ['admin-categories'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('categories')
+        .from('categories')   // ← Correct table name
         .select('*')
         .order('name');
       
