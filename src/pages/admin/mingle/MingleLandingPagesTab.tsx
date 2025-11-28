@@ -82,25 +82,27 @@ export const MingleLandingPagesTab = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Mingle - Landing Pages</h2>
+    <div className="space-y-6 mingle-moody-theme">
+      <h2 className="text-2xl font-bold text-mingle-cyan">Mingle - Landing Pages</h2>
 
-      <Card>
+      <Card className="bg-mingle-dark border-mingle-border">
         <CardHeader>
-          <CardTitle>{editingId ? "Edit" : "Add"} Landing Page</CardTitle>
+          <CardTitle className="text-mingle-cyan">{editingId ? "Edit" : "Add"} Landing Page</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Title</Label>
+            <Label className="text-mingle-text">Title</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
 
           <div>
-            <Label>Description</Label>
+            <Label className="text-mingle-text">Description</Label>
             <Textarea
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
@@ -108,11 +110,11 @@ export const MingleLandingPagesTab = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={() => saveMutation.mutate()}>
+            <Button className="bg-mingle-cyan text-mingle-darker hover:bg-mingle-cyan/90" onClick={() => saveMutation.mutate()}>
               {editingId ? "Update" : "Create"}
             </Button>
             {editingId && (
-              <Button variant="outline" onClick={resetForm}>
+              <Button variant="outline" className="border-mingle-border text-mingle-text hover:bg-mingle-darker" onClick={resetForm}>
                 Cancel
               </Button>
             )}
@@ -120,20 +122,20 @@ export const MingleLandingPagesTab = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-mingle-dark border-mingle-border">
         <CardHeader>
-          <CardTitle>Existing Landing Pages</CardTitle>
+          <CardTitle className="text-mingle-cyan">Existing Landing Pages</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {pages?.map((page) => (
-              <div key={page.id} className="flex items-center justify-between p-4 border rounded">
+              <div key={page.id} className="flex items-center justify-between p-4 border border-mingle-border rounded bg-mingle-darker">
                 <div className="flex-1">
-                  <div className="font-medium">{page.title}</div>
-                  <div className="text-sm text-muted-foreground line-clamp-2">{page.description}</div>
+                  <div className="font-medium text-mingle-text">{page.title}</div>
+                  <div className="text-sm text-mingle-text/60 line-clamp-2">{page.description}</div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(page)}>
+                  <Button size="icon" variant="outline" className="border-mingle-border text-mingle-cyan hover:bg-mingle-dark" onClick={() => handleEdit(page)}>
                     <Pencil className="w-4 h-4" />
                   </Button>
                   <Button size="icon" variant="destructive" onClick={() => deleteMutation.mutate(page.id)}>

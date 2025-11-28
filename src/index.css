@@ -46,6 +46,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 0 0% 90%;
     --sidebar-ring: 220 90% 56%;
+
+    --mingle-dark: 215 50% 10%;
+    --mingle-darker: 215 55% 6%;
+    --mingle-cyan: 187 100% 50%;
+    --mingle-text: 0 0% 90%;
+    --mingle-border: 215 45% 15%;
   }
 
   .dark {
@@ -84,6 +90,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 20%;
     --sidebar-ring: 220 90% 56%;
+
+    --mingle-dark: 215 50% 10%;
+    --mingle-darker: 215 55% 6%;
+    --mingle-cyan: 187 100% 50%;
+    --mingle-text: 0 0% 90%;
+    --mingle-border: 215 45% 15%;
   }
 }
 
@@ -94,5 +106,27 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  .mingle-moody-theme {
+    @apply text-mingle-text;
+  }
+
+  .mingle-moody-theme .card {
+    @apply bg-mingle-dark border-mingle-border;
+  }
+
+  .mingle-moody-theme h2,
+  .mingle-moody-theme h3 {
+    @apply text-mingle-cyan;
+  }
+
+  .mingle-moody-theme button {
+    @apply bg-mingle-cyan text-mingle-darker hover:bg-mingle-cyan/90;
+  }
+
+  .mingle-moody-theme input,
+  .mingle-moody-theme textarea {
+    @apply bg-mingle-darker border-mingle-border text-mingle-text focus:ring-mingle-cyan;
   }
 }

@@ -57,6 +57,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        mingle: {
+          dark: "hsl(var(--mingle-dark))",
+          darker: "hsl(var(--mingle-darker))",
+          cyan: "hsl(var(--mingle-cyan))",
+          text: "hsl(var(--mingle-text))",
+          border: "hsl(var(--mingle-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

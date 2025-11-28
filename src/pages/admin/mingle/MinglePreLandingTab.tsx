@@ -94,23 +94,23 @@ export const MinglePreLandingTab = () => {
   });
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Mingle - Pre-Landing Page Builder</h2>
+    <div className="space-y-6 mingle-moody-theme">
+      <h2 className="text-2xl font-bold text-mingle-cyan">Mingle - Pre-Landing Page Builder</h2>
 
-      <Card>
+      <Card className="bg-mingle-dark border-mingle-border">
         <CardHeader>
-          <CardTitle>Configure Pre-Landing Page</CardTitle>
+          <CardTitle className="text-mingle-cyan">Configure Pre-Landing Page</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Select or Create Key</Label>
+            <Label className="text-mingle-text">Select or Create Key</Label>
             <Select value={selectedKey} onValueChange={setSelectedKey}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-mingle-darker border-mingle-border text-mingle-text">
                 <SelectValue placeholder="Choose a key or create new" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-mingle-darker border-mingle-border">
                 {configs?.map((cfg) => (
-                  <SelectItem key={cfg.key} value={cfg.key}>
+                  <SelectItem key={cfg.key} value={cfg.key} className="text-mingle-text hover:bg-mingle-dark focus:bg-mingle-dark focus:text-mingle-cyan">
                     {cfg.key}
                   </SelectItem>
                 ))}
@@ -119,8 +119,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Key (for new config)</Label>
+            <Label className="text-mingle-text">Key (for new config)</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.key}
               onChange={(e) => setFormData({ ...formData, key: e.target.value })}
               placeholder="Enter unique key"
@@ -128,8 +129,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Logo URL</Label>
+            <Label className="text-mingle-text">Logo URL</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.logo_url}
               onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
               placeholder="https://example.com/logo.png"
@@ -137,8 +139,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Main Image URL</Label>
+            <Label className="text-mingle-text">Main Image URL</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.main_image_url}
               onChange={(e) => setFormData({ ...formData, main_image_url: e.target.value })}
               placeholder="https://example.com/hero.jpg"
@@ -146,8 +149,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Headline</Label>
+            <Label className="text-mingle-text">Headline</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.headline}
               onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
               placeholder="Enter your compelling headline"
@@ -155,8 +159,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Subtitle</Label>
+            <Label className="text-mingle-text">Subtitle</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.subtitle}
               onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
               placeholder="Enter your subtitle"
@@ -164,8 +169,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Description</Label>
+            <Label className="text-mingle-text">Description</Label>
             <Textarea
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Enter your description"
@@ -174,8 +180,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Redirect Description (shown during countdown)</Label>
+            <Label className="text-mingle-text">Redirect Description (shown during countdown)</Label>
             <Textarea
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.redirect_description}
               onChange={(e) => setFormData({ ...formData, redirect_description: e.target.value })}
               placeholder="You will be redirected to..."
@@ -184,8 +191,9 @@ export const MinglePreLandingTab = () => {
           </div>
 
           <div>
-            <Label>Countdown Seconds (2-10)</Label>
+            <Label className="text-mingle-text">Countdown Seconds (2-10)</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               type="number"
               min="2"
               max="10"
@@ -196,8 +204,9 @@ export const MinglePreLandingTab = () => {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label>Background Color</Label>
+              <Label className="text-mingle-text">Background Color</Label>
               <Input
+                className="bg-mingle-darker border-mingle-border text-mingle-text"
                 type="color"
                 value={formData.background_color}
                 onChange={(e) => setFormData({ ...formData, background_color: e.target.value })}
@@ -205,8 +214,9 @@ export const MinglePreLandingTab = () => {
             </div>
 
             <div>
-              <Label>Button Color</Label>
+              <Label className="text-mingle-text">Button Color</Label>
               <Input
+                className="bg-mingle-darker border-mingle-border text-mingle-text"
                 type="color"
                 value={formData.button_color}
                 onChange={(e) => setFormData({ ...formData, button_color: e.target.value })}
@@ -214,8 +224,9 @@ export const MinglePreLandingTab = () => {
             </div>
 
             <div>
-              <Label>Button Text Color</Label>
+              <Label className="text-mingle-text">Button Text Color</Label>
               <Input
+                className="bg-mingle-darker border-mingle-border text-mingle-text"
                 type="color"
                 value={formData.button_text_color}
                 onChange={(e) => setFormData({ ...formData, button_text_color: e.target.value })}
@@ -223,7 +234,7 @@ export const MinglePreLandingTab = () => {
             </div>
           </div>
 
-          <Button onClick={() => saveConfig.mutate()}>
+          <Button className="bg-mingle-cyan text-mingle-darker hover:bg-mingle-cyan/90" onClick={() => saveConfig.mutate()}>
             Save Configuration
           </Button>
         </CardContent>
