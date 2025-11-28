@@ -105,25 +105,27 @@ export const MingleWebResultsTab = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Mingle - Web Results</h2>
+    <div className="space-y-6 mingle-moody-theme">
+      <h2 className="text-2xl font-bold text-mingle-cyan">Mingle - Web Results</h2>
 
-      <Card>
+      <Card className="bg-mingle-dark border-mingle-border">
         <CardHeader>
-          <CardTitle>{editingId ? "Edit" : "Add"} Web Result</CardTitle>
+          <CardTitle className="text-mingle-cyan">{editingId ? "Edit" : "Add"} Web Result</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Title</Label>
+            <Label className="text-mingle-text">Title</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
 
           <div>
-            <Label>Description</Label>
+            <Label className="text-mingle-text">Description</Label>
             <Textarea
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
@@ -131,8 +133,9 @@ export const MingleWebResultsTab = () => {
           </div>
 
           <div>
-            <Label>Target URL</Label>
+            <Label className="text-mingle-text">Target URL</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.target_url}
               onChange={(e) => setFormData({ ...formData, target_url: e.target.value })}
               placeholder="https://example.com"
@@ -140,8 +143,9 @@ export const MingleWebResultsTab = () => {
           </div>
 
           <div>
-            <Label>Logo URL</Label>
+            <Label className="text-mingle-text">Logo URL</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.logo_url}
               onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
               placeholder="https://example.com/logo.png"
@@ -150,8 +154,9 @@ export const MingleWebResultsTab = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Page Number</Label>
+              <Label className="text-mingle-text">Page Number</Label>
               <Input
+                className="bg-mingle-darker border-mingle-border text-mingle-text"
                 type="number"
                 value={formData.page_number}
                 onChange={(e) => setFormData({ ...formData, page_number: parseInt(e.target.value) || 1 })}
@@ -159,8 +164,9 @@ export const MingleWebResultsTab = () => {
             </div>
 
             <div>
-              <Label>Position</Label>
+              <Label className="text-mingle-text">Position</Label>
               <Input
+                className="bg-mingle-darker border-mingle-border text-mingle-text"
                 type="number"
                 value={formData.position}
                 onChange={(e) => setFormData({ ...formData, position: parseInt(e.target.value) || 1 })}
@@ -169,8 +175,9 @@ export const MingleWebResultsTab = () => {
           </div>
 
           <div>
-            <Label>Pre-Landing Page Key</Label>
+            <Label className="text-mingle-text">Pre-Landing Page Key</Label>
             <Input
+              className="bg-mingle-darker border-mingle-border text-mingle-text"
               value={formData.pre_landing_page_key}
               onChange={(e) => setFormData({ ...formData, pre_landing_page_key: e.target.value })}
             />
@@ -182,7 +189,7 @@ export const MingleWebResultsTab = () => {
                 checked={formData.is_active}
                 onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
               />
-              <Label>Active</Label>
+              <Label className="text-mingle-text">Active</Label>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -190,16 +197,16 @@ export const MingleWebResultsTab = () => {
                 checked={formData.is_sponsored}
                 onCheckedChange={(checked) => setFormData({ ...formData, is_sponsored: checked })}
               />
-              <Label>Sponsored</Label>
+              <Label className="text-mingle-text">Sponsored</Label>
             </div>
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={() => saveMutation.mutate()}>
+            <Button className="bg-mingle-cyan text-mingle-darker hover:bg-mingle-cyan/90" onClick={() => saveMutation.mutate()}>
               {editingId ? "Update" : "Create"}
             </Button>
             {editingId && (
-              <Button variant="outline" onClick={resetForm}>
+              <Button variant="outline" className="border-mingle-border text-mingle-text hover:bg-mingle-darker" onClick={resetForm}>
                 Cancel
               </Button>
             )}
@@ -207,25 +214,25 @@ export const MingleWebResultsTab = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-mingle-dark border-mingle-border">
         <CardHeader>
-          <CardTitle>Existing Web Results</CardTitle>
+          <CardTitle className="text-mingle-cyan">Existing Web Results</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {results?.map((result) => (
-              <div key={result.id} className="flex items-center justify-between p-4 border rounded">
+              <div key={result.id} className="flex items-center justify-between p-4 border border-mingle-border rounded bg-mingle-darker">
                 <div>
-                  <div className="font-medium">{result.title}</div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="font-medium text-mingle-text">{result.title}</div>
+                  <div className="text-sm text-mingle-text/60">
                     Page: {result.page_number} | Pos: {result.position}
                     {result.is_sponsored && " | Sponsored"}
                     {!result.is_active && " | Inactive"}
                   </div>
-                  <div className="text-xs text-muted-foreground truncate max-w-md">{result.target_url}</div>
+                  <div className="text-xs text-mingle-text/40 truncate max-w-md">{result.target_url}</div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="icon" variant="outline" onClick={() => handleEdit(result)}>
+                  <Button size="icon" variant="outline" className="border-mingle-border text-mingle-cyan hover:bg-mingle-dark" onClick={() => handleEdit(result)}>
                     <Pencil className="w-4 h-4" />
                   </Button>
                   <Button size="icon" variant="destructive" onClick={() => deleteMutation.mutate(result.id)}>
