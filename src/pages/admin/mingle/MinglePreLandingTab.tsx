@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { mingleSupabase } from "@/integrations/mingle/client";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,9 +11,9 @@ import { toast } from "sonner";
 
 export const MinglePreLandingTab = () => {
   const queryClient = useQueryClient();
-  const [selectedSearchId, setSelectedSearchId] = useState("");
+  const [selectedKey, setSelectedKey] = useState("");
   const [formData, setFormData] = useState({
-    related_search_id: "",
+    key: "",
     logo_url: "",
     main_image_url: "",
     headline: "",
@@ -27,33 +26,33 @@ export const MinglePreLandingTab = () => {
     button_text_color: "#ffffff"
   });
 
-  // Fetch all related searches from MAIN database
-  const { data: relatedSearches } = useQuery({
-    queryKey: ['related-searches-all'],
+  // Fetch all prelander configs from MINGLE database
+  const { data: prelanderConfigs } = useQuery({
+    queryKey: ['mingle-prelander-configs'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('related_searches')
+      const { data, error } = await mingleSupabase
+        .from('prelander_configs')
         .select('*')
-        .order('search_text');
+        .order('key');
       if (error) throw error;
       return data;
     }
   });
 
-  // Fetch config from MAIN database
+  // Fetch config from MINGLE database
   const { data: config } = useQuery({
-    queryKey: ['prelanding-config', selectedSearchId],
+    queryKey: ['mingle-prelanding-config', selectedKey],
     queryFn: async () => {
-      if (!selectedSearchId) return null;
-      const { data, error } = await supabase
-        .from('pre_landing_config')
+      if (!selectedKey) return null;
+      const { data, error } = await mingleSupabase
+        .from('prelander_configs')
         .select('*')
-        .eq('related_search_id', selectedSearchId)
+        .eq('key', selectedKey)
         .maybeSingle();
       if (error) throw error;
       if (data) {
         setFormData({
-          related_search_id: data.related_search_id || "",
+          key: data.key || "",
           logo_url: data.logo_url || "",
           main_image_url: data.main_image_url || "",
           headline: data.headline || "",
@@ -68,58 +67,28 @@ export const MinglePreLandingTab = () => {
       }
       return data;
     },
-    enabled: !!selectedSearchId
+    enabled: !!selectedKey
   });
 
   const saveConfig = useMutation({
     mutationFn: async () => {
-      if (!formData.related_search_id) {
-        throw new Error("Related Search is required");
+      if (!formData.key) {
+        throw new Error("Config key is required");
       }
       
-      // Save to MAIN database (tejastarin)
-      if (config) {
-        const { error: mainError } = await supabase
-          .from('pre_landing_config')
-          .update(formData)
-          .eq('related_search_id', selectedSearchId);
-        if (mainError) throw mainError;
-      } else {
-        const { error: mainError } = await supabase
-          .from('pre_landing_config')
-          .insert(formData);
-        if (mainError) throw mainError;
-      }
-
-      // Also save to MINGLE database
-      const mingleData = {
-        key: formData.related_search_id,
-        ...formData
-      };
-      
-      const { data: existingMingle } = await mingleSupabase
+      // Save ONLY to MINGLE database
+      const { error } = await mingleSupabase
         .from('prelander_configs')
-        .select('*')
-        .eq('key', formData.related_search_id)
-        .maybeSingle();
+        .upsert(formData, {
+          onConflict: 'key'
+        });
       
-      if (existingMingle) {
-        const { error: mingleError } = await mingleSupabase
-          .from('prelander_configs')
-          .update(mingleData)
-          .eq('key', formData.related_search_id);
-        if (mingleError) throw mingleError;
-      } else {
-        const { error: mingleError } = await mingleSupabase
-          .from('prelander_configs')
-          .insert(mingleData);
-        if (mingleError) throw mingleError;
-      }
+      if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['prelanding-config'] });
-      queryClient.invalidateQueries({ queryKey: ['related-searches-all'] });
-      toast.success("Pre-landing saved to BOTH sites!");
+      queryClient.invalidateQueries({ queryKey: ['mingle-prelanding-config'] });
+      queryClient.invalidateQueries({ queryKey: ['mingle-prelander-configs'] });
+      toast.success("Pre-landing saved to Mingle!");
     }
   });
 
@@ -133,21 +102,21 @@ export const MinglePreLandingTab = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label className="text-mingle-text">Select Related Search</Label>
+            <Label className="text-mingle-text">Config Key</Label>
             <Select 
-              value={selectedSearchId} 
+              value={selectedKey} 
               onValueChange={(value) => {
-                setSelectedSearchId(value);
-                setFormData({ ...formData, related_search_id: value });
+                setSelectedKey(value);
+                setFormData({ ...formData, key: value });
               }}
             >
               <SelectTrigger className="bg-mingle-darker border-mingle-border text-mingle-text">
-                <SelectValue placeholder="Choose a related search" />
+                <SelectValue placeholder="Choose a config key" />
               </SelectTrigger>
               <SelectContent className="bg-mingle-darker border-mingle-border">
-                {relatedSearches?.map((search) => (
-                  <SelectItem key={search.id} value={search.id} className="text-mingle-text hover:bg-mingle-dark focus:bg-mingle-dark focus:text-mingle-cyan">
-                    {search.search_text}
+                {prelanderConfigs?.map((config) => (
+                  <SelectItem key={config.key} value={config.key} className="text-mingle-text hover:bg-mingle-dark focus:bg-mingle-dark focus:text-mingle-cyan">
+                    {config.key}
                   </SelectItem>
                 ))}
               </SelectContent>
